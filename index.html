@@ -1,10 +1,725 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Midhun Website</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Registration System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0f766e);
+      background-size: 400% 400%;
+      animation: bgMove 12s ease infinite;
+      color: white;
+      padding-bottom: 40px;
+    }
+
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 18px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar button {
+      padding: 10px 18px;
+      border-radius: 30px;
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.3s ease;
+    }
+
+    .navbar button:hover,
+    .navbar button.active {
+      background: linear-gradient(135deg, #14b8a6, #06b6d4);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-top: 10px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    #homePage {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      width: 92%;
+      max-width: 470px;
+      margin: 25px auto;
+      padding: 28px 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.28);
+      text-align: center;
+    }
+
+    .card h3 {
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px 15px;
+      margin: 10px 0;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      outline: none;
+      font-size: 15px;
+      transition: 0.3s ease;
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.75);
+    }
+
+    select option {
+      color: black;
+    }
+
+    input:focus, select:focus {
+      border-color: #22d3ee;
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
+    }
+
+    button.primary,
+    button.secondary,
+    button.danger {
+      margin-top: 14px;
+      border: none;
+      padding: 13px;
+      width: 100%;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #14b8a6, #06b6d4);
+      color: white;
+    }
+
+    button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(6, 182, 212, 0.35);
+    }
+
+    button.secondary {
+      background: rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    button.secondary:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    button.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    button.danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.35);
+    }
+
+    .message {
+      margin-top: 12px;
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    .success {
+      color: #86efac;
+    }
+
+    .error {
+      color: #fca5a5;
+    }
+
+    .info {
+      color: #93c5fd;
+    }
+
+    .table-container {
+      width: 94%;
+      max-width: 1150px;
+      margin: 30px auto;
+      overflow-x: auto;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .table-header h3 {
+      margin: 0;
+    }
+
+    .search-box {
+      max-width: 300px;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: white;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      text-align: center;
+    }
+
+    th {
+      background: rgba(255,255,255,0.08);
+    }
+
+    tr:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    #userList {
+      list-style: none;
+      margin-top: 20px;
+      padding: 0;
+      text-align: left;
+    }
+
+    #userList li {
+      background: rgba(255,255,255,0.12);
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      width: 94%;
+      max-width: 1000px;
+      margin: 20px auto;
+    }
+
+    .stat-box {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .stat-box h4 {
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 10px;
+    }
+
+    .stat-box p {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    .empty-text {
+      text-align: center;
+      color: rgba(255,255,255,0.8);
+      padding: 16px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 24px 18px;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
-<body style="text-align:center;">
-  <h1>Welcome Midhun</h1>
-  <p>Cloudflare Pages working 🔥</p>
+<body>
+
+  <div class="navbar">
+    <button onclick="showPage('homePage', this)" class="active">Home</button>
+    <button onclick="showPage('signupPage', this)">Registration</button>
+    <button onclick="showPage('loginPage', this)">Login</button>
+    <button onclick="showPage('adminPage', this)">Admin</button>
+    <button onclick="showPage('tablePage', this)">Participants</button>
+  </div>
+
+  <h1>🎉 Event Registration System</h1>
+  <p class="subtitle">A modern event registration and participant management portal</p>
+
+  <!-- HOME -->
+  <div id="homePage" class="page">
+    <div class="stats">
+      <div class="stat-box">
+        <h4>Total Users</h4>
+        <p id="totalUsers">0</p>
+      </div>
+      <div class="stat-box">
+        <h4>Total Participants</h4>
+        <p id="totalParticipants">0</p>
+      </div>
+      <div class="stat-box">
+        <h4>Categories</h4>
+        <p id="totalCategories">3</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Welcome</h3>
+      <p style="line-height:1.8;">
+        Register for exciting events, log in to view your details, and let the admin
+        manage all participants from one stylish dashboard.
+      </p>
+    </div>
+  </div>
+
+  <!-- SIGNUP -->
+  <div id="signupPage" class="card page">
+    <h3>User Registration</h3>
+
+    <input type="text" id="fullName" placeholder="Full Name" />
+    <input type="email" id="newEmail" placeholder="Email Address" />
+    <input type="password" id="newPass" placeholder="Password" />
+    <input type="password" id="confirmPass" placeholder="Confirm Password" />
+
+    <select id="signupCategory" onchange="loadEvents('signupCategory','signupEvent')">
+      <option value="">Choose Event Category</option>
+      <option value="Tech">Tech</option>
+      <option value="Cultural">Cultural</option>
+      <option value="Workshop">Workshop</option>
+      <option value="Sports">Sports</option>
+    </select>
+
+    <select id="signupEvent">
+      <option value="">Choose Event</option>
+    </select>
+
+    <button class="primary" onclick="signup()">Create Account</button>
+    <p id="signupMsg" class="message"></p>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginPage" class="card page">
+    <h3>User Login</h3>
+
+    <input type="email" id="loginUser" placeholder="Email Address" />
+    <input type="password" id="loginPass" placeholder="Password" />
+
+    <button class="primary" onclick="login()">Login</button>
+    <p id="loginMsg" class="message"></p>
+  </div>
+
+  <!-- USER PAGE -->
+  <div id="userPage" class="card page">
+    <h3>User Details</h3>
+
+    <input type="text" id="userName" placeholder="Full Name" readonly />
+    <input type="email" id="userEmail" placeholder="Email Address" readonly />
+    <input type="text" id="userCategory" placeholder="Event Category" readonly />
+    <input type="text" id="userEvent" placeholder="Event Name" readonly />
+
+    <button class="primary" onclick="showPage('tablePage')">View Participants</button>
+    <button class="secondary" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="adminPage" class="card page">
+    <h3>Admin Panel</h3>
+
+    <input type="password" id="adminPass" placeholder="Enter Admin Password" />
+    <button class="primary" onclick="adminLogin()">Enter Admin Panel</button>
+
+    <div id="adminControls" style="display:none; margin-top:20px;">
+      <h4 style="margin-bottom: 15px;">Registered Participants</h4>
+      <ul id="userList"></ul>
+
+      <button class="danger" onclick="clearAllParticipants()">Remove All Participants</button>
+    </div>
+  </div>
+
+  <!-- TABLE PAGE -->
+  <div id="tablePage" class="page">
+    <div class="table-container">
+      <div class="table-header">
+        <h3>Participants Table</h3>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-box"
+          placeholder="Search by name / email / event..."
+          oninput="updateTable()"
+        />
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Category</th>
+            <th>Event</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // DATA
+    // =========================
+    const eventData = {
+      Tech: ["Hackathon", "AI Challenge", "Coding Contest", "Web Summit"],
+      Cultural: ["Dance Competition", "Singing", "Drama", "Photography"],
+      Workshop: ["Web Development", "Robotics", "UI/UX Design", "Python Bootcamp"],
+      Sports: ["Football", "Cricket", "Badminton", "Chess Tournament"]
+    };
+
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+    let registrations = JSON.parse(localStorage.getItem("registrations")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+
+    // =========================
+    // HELPERS
+    // =========================
+    function saveData() {
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("registrations", JSON.stringify(registrations));
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    }
+
+    function setMessage(elementId, text, type = "info") {
+      const el = document.getElementById(elementId);
+      el.className = "message";
+      el.innerText = text;
+      if (type) el.classList.add(type);
+    }
+
+    function clearMessage(elementId) {
+      const el = document.getElementById(elementId);
+      el.className = "message";
+      el.innerText = "";
+    }
+
+    function updateStats() {
+      document.getElementById("totalUsers").innerText = Object.keys(users).length;
+      document.getElementById("totalParticipants").innerText = registrations.length;
+      document.getElementById("totalCategories").innerText = Object.keys(eventData).length;
+    }
+
+    function showPage(id, btn = null) {
+      document.querySelectorAll(".page").forEach(page => page.style.display = "none");
+      document.getElementById(id).style.display = "block";
+
+      document.querySelectorAll(".navbar button").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      else {
+        document.querySelectorAll(".navbar button").forEach(b => {
+          if (b.getAttribute("onclick")?.includes(id)) b.classList.add("active");
+        });
+      }
+
+      if (id === "tablePage") updateTable();
+      if (id === "adminPage" && document.getElementById("adminControls").style.display === "block") {
+        showUsers();
+      }
+    }
+
+    function loadEvents(categoryId, eventId) {
+      const category = document.getElementById(categoryId).value;
+      const eventSelect = document.getElementById(eventId);
+
+      eventSelect.innerHTML = '<option value="">Choose Event</option>';
+
+      if (eventData[category]) {
+        eventData[category].forEach(ev => {
+          const option = document.createElement("option");
+          option.value = ev;
+          option.textContent = ev;
+          eventSelect.appendChild(option);
+        });
+      }
+    }
+
+    function emailExists(email) {
+      return users.hasOwnProperty(email);
+    }
+
+    // =========================
+    // SIGNUP
+    // =========================
+    function signup() {
+      const name = document.getElementById("fullName").value.trim();
+      const email = document.getElementById("newEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("newPass").value;
+      const confirm = document.getElementById("confirmPass").value;
+      const category = document.getElementById("signupCategory").value;
+      const event = document.getElementById("signupEvent").value;
+
+      if (!name || !email || !pass || !confirm || !category || !event) {
+        return setMessage("signupMsg", "Please fill all fields", "error");
+      }
+
+      if (pass.length < 4) {
+        return setMessage("signupMsg", "Password must be at least 4 characters", "error");
+      }
+
+      if (pass !== confirm) {
+        return setMessage("signupMsg", "Passwords do not match", "error");
+      }
+
+      if (emailExists(email)) {
+        return setMessage("signupMsg", "User already registered with this email", "error");
+      }
+
+      // Save login user
+      users[email] = {
+        name,
+        pass,
+        category,
+        event
+      };
+
+      // Save participant entry
+      registrations.push({
+        name,
+        email,
+        category,
+        event
+      });
+
+      saveData();
+      updateStats();
+      showUsers();
+      updateTable();
+
+      setMessage("signupMsg", "Registration successful!", "success");
+
+      // Clear form
+      document.getElementById("fullName").value = "";
+      document.getElementById("newEmail").value = "";
+      document.getElementById("newPass").value = "";
+      document.getElementById("confirmPass").value = "";
+      document.getElementById("signupCategory").value = "";
+      document.getElementById("signupEvent").innerHTML = '<option value="">Choose Event</option>';
+    }
+
+    // =========================
+    // LOGIN
+    // =========================
+    function login() {
+      const email = document.getElementById("loginUser").value.trim().toLowerCase();
+      const pass = document.getElementById("loginPass").value;
+
+      if (!email || !pass) {
+        return setMessage("loginMsg", "Please enter email and password", "error");
+      }
+
+      if (users[email] && users[email].pass === pass) {
+        currentUser = { email };
+        saveData();
+
+        document.getElementById("userName").value = users[email].name;
+        document.getElementById("userEmail").value = email;
+        document.getElementById("userCategory").value = users[email].category;
+        document.getElementById("userEvent").value = users[email].event;
+
+        clearMessage("loginMsg");
+        showPage("userPage");
+      } else {
+        setMessage("loginMsg", "Invalid email or password", "error");
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      saveData();
+      showPage("homePage");
+    }
+
+    // =========================
+    // ADMIN
+    // =========================
+    function adminLogin() {
+      const pass = document.getElementById("adminPass").value;
+
+      if (pass === "admin123") {
+        document.getElementById("adminControls").style.display = "block";
+        showUsers();
+      } else {
+        alert("Wrong admin password");
+      }
+    }
+
+    function showUsers() {
+      const list = document.getElementById("userList");
+      list.innerHTML = "";
+
+      if (registrations.length === 0) {
+        list.innerHTML = "<li>No registrations yet</li>";
+        return;
+      }
+
+      registrations.forEach((r, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${index + 1}. ${r.name}</strong><br>
+          📧 ${r.email}<br>
+          🗂️ ${r.category}<br>
+          🎯 ${r.event}
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function clearAllParticipants() {
+      const confirmDelete = confirm("Are you sure you want to remove all participants?");
+      if (!confirmDelete) return;
+
+      registrations = [];
+      users = {};
+      currentUser = null;
+      saveData();
+      updateStats();
+      showUsers();
+      updateTable();
+
+      alert("All participant data removed successfully.");
+    }
+
+    
+    function updateTable() {
+      const body = document.getElementById("tableBody");
+      const search = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+      body.innerHTML = "";
+
+      const filtered = registrations.filter(r =>
+        r.name.toLowerCase().includes(search) ||
+        r.email.toLowerCase().includes(search) ||
+        r.category.toLowerCase().includes(search) ||
+        r.event.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-text">No participants found</td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(r => {
+        const row = `
+          <tr>
+            <td>${r.name}</td>
+            <td>${r.email}</td>
+            <td>${r.category}</td>
+            <td>${r.event}</td>
+          </tr>
+        `;
+        body.innerHTML += row;
+      });
+    }
+    function initApp() {
+      updateStats();
+      showUsers();
+      updateTable();
+
+    
+      if (currentUser && users[currentUser.email]) {
+        document.getElementById("userName").value = users[currentUser.email].name;
+        document.getElementById("userEmail").value = currentUser.email;
+        document.getElementById("userCategory").value = users[currentUser.email].category;
+        document.getElementById("userEvent").value = users[currentUser.email].event;
+      }
+    }
+
+    initApp();
+  </script>
 </body>
 </html>
